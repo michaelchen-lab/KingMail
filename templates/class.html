@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    KingMail
+{% endblock %}
+
+{% block body %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand mb-0 h1" href="#">KingMail</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarDavDropdown">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('home') }}>Home</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('class_list') }}>Classes</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('login') }}>Logout</a>
+      </li>
+
+    </ul>
+    <span class="navbar-text">
+      Signed in as {{ user }}
+    </span>
+  </div>
+</nav>
+
+<br>
+<table class="table table-hover table-bordered">
+  <thead class="thead-dark">
+    <tr>
+      <th class="w-25 p-3" scope="col">Student</th>
+      <th class="w-50 p-3" scope="col">Email</th>
+      <th class="w-25 p-3" scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student,email in name_list.items() %}
+      <tr>
+        <td>{{ student }}</td>
+        <td>{{ email }}</td>
+        <td>
+          <a href={{ url_for('particular_class', one_class=one_class, action='delete', chosen_class=chosen_class) }}>
+            <img src="cross.jpg" width="20" height="20" alt="Delete">
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

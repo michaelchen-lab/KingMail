@@ -1,0 +1,35 @@
+
+{% extends "layout.html" %}
+
+{% block title %}
+    DeMovies Login
+{% endblock %}
+
+{% block body %}
+    <h1>Login to DeMovies</h1><br>
+    <h5 style="color:red;">Invalid Username or Password.</h5>
+
+    <form method="post">
+
+        Username:<br>
+        <div class="form-group">
+            <input class="form-control" name="Username" placeholder="Rene_Descartes">
+        </div>
+
+        Password:<br>
+        <div class="form-group">
+            <input class="form-control" name="Password" placeholder="meditations01">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Login</button>
+        </div>
+
+    </form>
+
+    <form action="/join" method="get">
+
+        <input class="btn btn-primary" type="submit" value="Join DeMovies" />
+
+    </form>
+{% endblock %}

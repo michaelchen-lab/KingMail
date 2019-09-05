@@ -1,0 +1,10 @@
+EMAIL SENDER WEB APP
+
+Introduction:
+Most secondary schools do not have school emails. There is no standardized way to communicating via email.
+This app allows teachers to communicate with students more easily.
+
+Features:
+    1. Ability to save student email list
+    2. Email Templates (e.g. homework list and announcements)
+    3. Keep track of students' online homework submissions via email

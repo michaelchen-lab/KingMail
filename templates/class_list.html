@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    KingMail
+{% endblock %}
+
+{% block body %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand mb-0 h1" href="#">KingMail</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarDavDropdown">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('home') }}>Home</a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href={{ url_for('class_list') }}>Classes<span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('login') }}>Logout</a>
+      </li>
+
+    </ul>
+    <span class="navbar-text">
+      Signed in as {{ user }}
+    </span>
+  </div>
+</nav>
+
+<br>
+<table class="table table-hover table-bordered">
+  <thead class="thead-dark">
+    <tr>
+      <th class="w-75 p-3"scope="col">Class</th>
+      <th class="w-25 p-3" scope="col">Students</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for class, num in classes.items() %}
+      <tr>
+        <td>
+          <a href={{ url_for("particular_class", one_class=class.replace(' ','_')) }}>{{ class }}</a>
+        </td>
+        <td>{{ num }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<br>
+<a class="btn btn-primary" href={{ url_for('add_class') }} role="button">Add Class</a>
+
+{% endblock %}
