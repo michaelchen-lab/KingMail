@@ -18,10 +18,10 @@ def start():
         2. email_list_df ---- empty table with columns movie, user, rating and description
     """
 
-    user_df = pd.DataFrame(columns=['first_name','last_name','email','password'], dtype = 'str')
+    user_df = pd.DataFrame(columns=['first_name','last_name','email','password','email_type'], dtype = 'str')
     user_df.to_sql('users', engine, index=False, method='multi')
 
-    email_list_df = pd.DataFrame(columns=['teacher', 'class', 'names', 'emails','total'], dtype='str')
+    email_list_df = pd.DataFrame(columns=['user_email', 'class', 'names', 'emails','total'], dtype='str')
     email_list_df.to_sql('email_lists', engine, index=False, method='multi')
 
 start()

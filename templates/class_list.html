@@ -33,25 +33,41 @@
   </div>
 </nav>
 
-<br>
-<table class="table table-hover table-bordered">
-  <thead class="thead-dark">
-    <tr>
-      <th class="w-75 p-3"scope="col">Class</th>
-      <th class="w-25 p-3" scope="col">Students</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for class, num in classes.items() %}
+{% if message != None %}
+  <br>
+  <div class="alert alert-success" role="alert">
+    {% if message == 'deleted' %}
+      Your class list has been deleted.
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if classes != '' %}
+  <br>
+  <table class="table table-hover table-bordered">
+    <thead class="thead-dark">
       <tr>
-        <td>
-          <a href={{ url_for("particular_class", one_class=class.replace(' ','_')) }}>{{ class }}</a>
-        </td>
-        <td>{{ num }}</td>
+        <th class="w-75 p-3"scope="col">Class</th>
+        <th class="w-25 p-3" scope="col">Students</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for class, num in classes.items() %}
+        <tr>
+          <td>
+            <a href={{ url_for("particular_class", one_class=class.replace(' ','_'), show_editor=False) }}>{{ class }}</a>
+          </td>
+          <td>{{ num }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <br>
+  <div class="alert alert-primary" role="alert">
+    Oops. No classes found.
+  </div>
+{% endif %}
 
 <br>
 <a class="btn btn-primary" href={{ url_for('add_class') }} role="button">Add Class</a>

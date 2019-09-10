@@ -33,6 +33,16 @@
   </div>
 </nav>
 
+{% if action == 'new' %}
+  <br>
+  <div class="alert alert-success" role="alert">
+    Your new class list has been created!
+  </div>
+{% endif %}
+
+<br>
+<h3>{{ one_class.replace('_',' ') }}</h3>
+
 <br>
 <table class="table table-hover table-bordered">
   <thead class="thead-dark">
@@ -43,18 +53,48 @@
     </tr>
   </thead>
   <tbody>
-    {% for student,email in name_list.items() %}
+    {% for student,email in student_list.items() %}
       <tr>
         <td>{{ student }}</td>
         <td>{{ email }}</td>
         <td>
-          <a href={{ url_for('particular_class', one_class=one_class, action='delete', chosen_class=chosen_class) }}>
-            <img src="cross.jpg" width="20" height="20" alt="Delete">
-          </a>
+          <a href={{ url_for("particular_class", one_class=one_class, action='delete', show_editor=show_editor, student=student, email=email) }}>Delete</a>
         </td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+{% if show_editor == "True" %}
+  <br>
+  <h4>Editor   <a class="btn btn-primary" href={{ url_for('particular_class', one_class=one_class, action=None, show_editor=False) }} role="button">Close Editor</a></h4>
+  <br>
+
+  <form class="form-inline" method="get">
+    <div class="form-group mb-2">
+      <input type="text" class="form-control" id="inputText" name="class_name" placeholder="New Class Name">
+    </div>
+    <button type="submit" class="btn btn-secondary mx-sm-3 mb-2">Change Class Name</button>
+  </form>
+
+  <br>
+  <form class="form-inline">
+    <div class="form-group mb-2">
+      <input type="text" class="form-control" id="inputText" name="student_name" placeholder="Student Name">
+    </div>
+    <div class="form-group mx-sm-3 mb-2">
+      <input type="email" class="form-control" id="inputEmail" name="student_email" placeholder="Student Email">
+    </div>
+    <button type="submit" class="btn btn-secondary mb-2">Add Student</button>
+  </form>
+
+  <br>
+  <a class="btn btn-danger" href={{ url_for('particular_class', one_class=one_class, action="delete_all", show_editor=show_editor ) }} role="button">Delete Class List</a>
+
+  <br><br>
+
+{% else %}
+  <a class="btn btn-primary" href={{ url_for('particular_class', one_class=one_class, action=None, show_editor=True) }} role="button">Launch Editor</a>
+{% endif %}
 
 {% endblock %}

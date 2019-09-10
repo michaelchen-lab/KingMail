@@ -14,7 +14,9 @@
         <div class="card card-signin my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Register for KingMail</h5>
-            <form class="form-signin" method="POST">
+
+            <form class="form-signin" method="POST"
+                  oninput='Password02.setCustomValidity(Password02.value != Password01.value ? "Passwords do not match." : "")'>
               <div class="form-label-group">
                 <input type="text" id="inputFirstName" name="FirstName" class="form-control" placeholder="First Name" required autofocus>
               </div>

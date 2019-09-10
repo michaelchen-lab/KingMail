@@ -33,8 +33,53 @@
   </div>
 </nav>
 
+{% if alert == 'delete_last' %}
+  <br>
+  <div class="alert alert-primary" role="alert">
+    Your last entry has been deleted.
+  </div>
+{% elif alert == 'delete_all' %}
+  <br>
+  <div class="alert alert-primary" role="alert">
+    All entries have been deleted.
+  </div>
+{% endif %}
+
+{% if not initial %}
+  <br>
+  <h3>{{ class_name }} (unsaved)</h3>
+  <table class="table table-hover table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th class="w-25 p-3" scope="col">Student</th>
+        <th class="w-50 p-3" scope="col">Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student,email in name_list.items() %}
+        <tr>
+          <td>{{ student }}</td>
+          <td>{{ email }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <form method='GET'>
+    <button name="edit" type="submit" value="delete_last" class="btn btn-secondary">Delete Last Entry</button>
+    <button name="edit" type="submit" value="delete_all" class="btn btn-secondary">Clear All Entries</button>
+  </form>
+{% endif %}
+
 <br>
-<form action="/action_page.php">
+<form method="post">
+  {% if initial %}
+    <div class="form-group">
+      <label for="name">Class Name:</label>
+      <input type="text" class="form-control" id="text" name="class_name">
+    </div>
+    <br>
+  {% endif %}
   <div class="form-group">
     <label for="name">Student Name:</label>
     <input type="text" class="form-control" id="text" name="name">
@@ -45,7 +90,7 @@
   </div>
 
   <div class="checkbox">
-    <label><input type="checkbox" name="add"> Add another name</label>
+    <label><input type="checkbox" name="add" checked> Add another name</label>
   </div>
 
   <button type="submit" class="btn btn-primary">Save</button>

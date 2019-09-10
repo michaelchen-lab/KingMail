@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    KingMail
+{% endblock %}
+
+{% block body %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand mb-0 h1" href="#">KingMail</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarDavDropdown">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('home') }}>Home</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('class_list') }}>Classes</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('send_email') }}>Send Email</a>
+      </li>
+
+      <li class="nav-item active">
+        <a class="nav-link" href={{ url_for('email_settings') }}>Settings<span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href={{ url_for('login') }}>Logout</a>
+      </li>
+
+    </ul>
+    <span class="navbar-text">
+      Signed in as {{ user }}
+    </span>
+  </div>
+</nav>
+
+<br>
+<form method="POST">
+  <div class="form-group row">
+    <label for="inputFirstName" class="col-sm-2 col-form-label">First Name</label>
+    <div class="col-10">
+      <input class="form-control" type="text" id="inputFirstName" value="{{ user_settings['first_name'] }}" name="first_name">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputLastName" class="col-sm-2 col-form-label">Last Name</label>
+    <div class="col-10">
+      <input class="form-control" type="text" id="inputLastName" value="{{ user_settings['last_name'] }}" name="last_name">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail" class="col-2 col-form-label">Email</label>
+    <div class="col-10">
+      <input class="form-control" type="email" value="{{ user_settings['email'] }}" id="inputEmail" name="email">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputPassword" class="col-2 col-form-label">Password</label>
+    <div class="col-10">
+      <input class="form-control" type="password" value="{{ user_settings['password'] }}" id="inputPassword" name="password">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmailType" class="col-2 col-form-label">Email Type</label>
+    <div class="col-10">
+      <select id="inputEmailType" class="form-control" name="email_type">
+        {% if user_settings['email_type'] == 'None' %}
+          <option selected>None</option>
+          <option>Gmail</option>
+          <option>Outlook</option>
+        {% elif user_settings['email_type'] == 'Gmail' %}
+          <option selected>Gmail</option>
+          <option>Outlook</option>
+        {% else %}
+          <option selected>Outlook</option>
+          <option>Gmail</option>
+        {% endif %}
+      </select>
+    </div>
+  </div>
+
+  <br><button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+{% endblock %}
