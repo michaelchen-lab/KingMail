@@ -1,7 +1,8 @@
 import pandas as pd
 import os, requests
-import statistics as stats
 from collections import OrderedDict
+import itertools
+from email_mod import send_email_mod
 
 from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
@@ -29,21 +30,25 @@ def login():
     Function: Sign-in page
     """
     success = request.args.get('success',False)
+    update_settings = request.args.get('update',False)
     if request.method == 'GET':
         if 'username' in session:
             session.clear()
-        return render_template("login.html", error=False, success=success)
+        return render_template("login.html", error=False, success=success, update=update_settings)
     else:
         email, password = request.form.get("Email"), request.form.get("Password")
         df = pd.read_sql('SELECT * from "users"',con=engine)
         if not df[((df['email'] == email) & (df['password'] == password))].empty:
             user = df[((df['email'] == email) & (df['password'] == password))]
-            first, last = user['first_name'].tolist()[0], user['last_name'].tolist()[0]
-            session['username'] = first + ' ' + last
-            session['email'] = email
+            first, last, email_password, email_type = user['first_name'].tolist()[0], user['last_name'].tolist()[0], user['email_password'].tolist()[0], user['email_type'].tolist()[0]
+
+            ## add user settings to session for future use
+            session['username'], session['email'] = first + ' ' + last, email
+            session['email_password'], session['email_type'] = email_password, email_type
+
             return redirect(url_for("home"), code=307) ## change to POST request
         else:
-            return render_template("login.html", error=True, success=success)
+            return render_template("login.html", error=True, success=success, update=update_settings)
 
 @app.route("/register", methods=['GET','POST'])
 def register():
@@ -58,7 +63,7 @@ def register():
         if pass01 != pass02:
             return render_template("register.html", error=True)
         else:
-            db.execute("INSERT INTO users VALUES ('{}','{}','{}','{}','{}')".format(str(first), str(last), str(email), str(pass01),'None'))
+            db.execute("INSERT INTO users VALUES ('{}','{}','{}','{}','{}','{}')".format(str(first), str(last), str(email), '', str(pass01),'None'))
             db.commit()
             return redirect(url_for('login', success=True))
 
@@ -93,6 +98,8 @@ def class_list():
 def add_class():
     """
     Function: Add class (names and emails)
+        1. GET request --- shows form to create a table (inputs: table name, first student name and email)
+        2. POST request --- either shows another form to add a student name and email or saves table to database
     """
     if 'username' in session:
         if request.method == "GET":
@@ -146,7 +153,12 @@ def add_class():
 @app.route("/<one_class>/<show_editor>", methods=["GET","POST"])
 def particular_class(one_class, show_editor):
     """
-    Function: Show names and emails of a particular class
+    Function:
+        1. Show names and emails of a particular class
+        2. 'delete' action --- delete one name and its corresponding email
+        3. 'delete_all' action --- deletes the entire table
+        4. 'class_name' form --- changes the name of table
+        5. 'student_name' and 'student_email' form --- adds one name and email to table
     """
     if 'username' in session:
         if request.method == 'GET':
@@ -200,11 +212,38 @@ def particular_class(one_class, show_editor):
 def send_email():
     """
     Function: Send email to classes
+        1. GET request --- Displays email form to user
+        2. POST request --- Sends email using inputs from GET request form
     """
     if "username" in session:
+        df = pd.read_sql('SELECT * from "email_lists"',con=engine)
         if request.method == 'GET':
-            df = pd.read_sql('SELECT * from "email_lists"',con=engine)
-            classes = df['class'].tolist()
+            ## Email form
+            classes = df.loc[df['user_email'] == session['email'], 'class'].tolist()
+
+            return render_template('send_email.html', classes=classes, sucess=False, user=session['username'])
+        else:
+            ## Send email to recipients
+            data = request.form.to_dict()
+            subject, body, attachment = data['subject'], data['body'], data['attachments']
+            del data['subject'], data['body'], data['attachments']
+
+            classes = [one_class.replace('_',' ') for one_class in data.keys()]
+            email_lists = df[((df['user_email'] == session['email']) & (df['class'].isin(classes)))]['emails'].tolist()
+            email_lists = [email_list.split(',') for email_list in email_lists]
+            receiver_emails = list(itertools.chain.from_iterable(email_lists))
+
+            ## send email through module
+            send_email_mod(
+                sender_email=session['email'],
+                sender_password=session['email_password'],
+                receiver_emails=receiver_emails,
+                email_type=session['email_type'],
+                subject=subject, body=body, attachment=attachment
+            )
+
+            return render_template('send_email.html', classes=classes, sucess=False, user=session['username'])
+
     else:
         return redirect(url_for("login"))
 
@@ -212,6 +251,8 @@ def send_email():
 def email_settings():
     """
     Function: User Email Settings
+        1. GET request --- Allows user to edit current settings through form
+        2. POST request --- Enters new settings from GET request form to database. Returns to Login page.
     """
     if "username" in session:
         df = pd.read_sql('SELECT * from "users"',con=engine)
@@ -220,12 +261,9 @@ def email_settings():
             return render_template('settings.html', user_settings=user_settings, user=session['username'])
         else:
             new_user_settings = request.form.to_dict()
-
-            df = df.loc[df['email'] != session['email']]
-            user_df = pd.DataFrame({setting:[value] for setting, value in new_user_settings.items()}, index=[0])
-            df = df.append(user_df)
+            df.loc[df['email'] == session['email'], list(df.columns.values)] = [setting for setting in new_user_settings.values()]
             df.to_sql('users', engine, index=False, method='multi', if_exists='replace')
 
-            return redirect(url_for("login"))
+            return redirect(url_for("login", success=True))
     else:
         return redirect(url_for("login"))

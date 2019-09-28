@@ -65,6 +65,13 @@
   </div>
 
   <div class="form-group row">
+    <label for="inputPassword" class="col-2 col-form-label">Email Password</label>
+    <div class="col-10">
+      <input class="form-control" type="password" value="{{ user_settings['email_password'] }}" id="inputPassword" name="email_password">
+    </div>
+  </div>
+
+  <div class="form-group row">
     <label for="inputPassword" class="col-2 col-form-label">Password</label>
     <div class="col-10">
       <input class="form-control" type="password" value="{{ user_settings['password'] }}" id="inputPassword" name="password">

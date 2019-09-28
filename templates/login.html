@@ -24,6 +24,11 @@
               <div class="alert alert-success" role="alert">
                 Your credentials have been saved!
               </div>
+            {% elif update == 'True' %}
+              <br>
+              <div class="alert alert-success" role="alert">
+                Your user settings have been updated!
+              </div>
             {% endif %}
 
             <form class="form-signin" method="POST">

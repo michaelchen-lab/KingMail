@@ -11,3 +11,9 @@ pandas
 statistics
 
 requests
+
+collections
+
+smtplib
+
+email
