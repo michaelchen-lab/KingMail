@@ -1,4 +1,4 @@
-# EMAIL SENDER WEB APP
+# KingMail Web App
 
 Most secondary schools do not have school emails. There is no standardized way to communicating via email.
 This app allows teachers to communicate with students more easily.
